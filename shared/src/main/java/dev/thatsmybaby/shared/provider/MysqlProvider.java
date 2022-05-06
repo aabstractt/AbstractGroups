@@ -19,7 +19,7 @@ public final class MysqlProvider {
     private HikariDataSource dataSource = null;
     private HikariConfig hikariConfig = null;
 
-    private Logger logger;
+    @Getter private Logger logger;
 
     public void init(File file) {
         try {
@@ -46,9 +46,7 @@ public final class MysqlProvider {
     }
 
     public AbstractResultSet fetch(String sql, Object... args) {
-        if (this.disconnected()) {
-            return this.reconnect() ? this.fetch(sql, args) : null;
-        }
+        if (this.disconnected()) return this.reconnect() ? this.fetch(sql, args) : null;
 
         try (Connection connection = this.dataSource.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -107,9 +105,7 @@ public final class MysqlProvider {
     }
 
     public void close() {
-        if (this.dataSource != null) {
-            this.dataSource.close();
-        }
+        if (this.dataSource != null) this.dataSource.close();
     }
 
     private void set(PreparedStatement preparedStatement, Object... args) throws SQLException {

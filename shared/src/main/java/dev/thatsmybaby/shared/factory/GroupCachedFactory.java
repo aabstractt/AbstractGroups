@@ -5,6 +5,7 @@ import dev.thatsmybaby.shared.object.PermissionCache;
 import dev.thatsmybaby.shared.provider.AbstractResultSet;
 import dev.thatsmybaby.shared.provider.MysqlProvider;
 import lombok.Getter;
+import org.apache.logging.log4j.Level;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,7 +20,7 @@ public final class GroupCachedFactory {
         AbstractResultSet rs = MysqlProvider.getInstance().fetch("SELECT * FROM abstract_groups");
 
         if (rs == null) {
-            // TODO: Log a error
+            MysqlProvider.getInstance().getLogger().log(Level.FATAL, "Error trying fetch abstract_groups and result received null");
 
             return;
         }
@@ -40,7 +41,7 @@ public final class GroupCachedFactory {
     public GroupCache fetchGroupCache(String name) {
         AbstractResultSet rs = MysqlProvider.getInstance().fetch("SELECT * FROM abstract_groups WHERE name = ?", name);
 
-        if (rs == null) return null;
+        if (rs == null || !rs.next()) return null;
 
         return GroupCache.fromResult(rs, this.fetchPermissionCache(name));
     }
