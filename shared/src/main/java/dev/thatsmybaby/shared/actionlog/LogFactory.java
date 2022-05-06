@@ -9,7 +9,7 @@ public final class LogFactory {
     @Getter private final static LogFactory instance = new LogFactory();
 
     public void broadcast(LoggedAction entry, AbstractSender sender) {
-        // TODO: Do this async
+        // TODO: Do this async and do stuff for action sql
         MysqlProvider.getInstance().store("INSERT INTO abstractgroups_logs () VALUES (?, ?)", sender);
 
         // TODO: Send redis pubsub
