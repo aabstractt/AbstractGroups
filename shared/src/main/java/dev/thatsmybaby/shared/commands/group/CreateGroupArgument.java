@@ -4,14 +4,14 @@ import dev.thatsmybaby.shared.command.AbstractArgument;
 import dev.thatsmybaby.shared.factory.GroupCachedFactory;
 import dev.thatsmybaby.shared.sender.AbstractSender;
 
-public final class CreateGroupArgument extends AbstractArgument {
+public final class CreateGroupArgument extends AbstractArgument<Void> {
 
     public CreateGroupArgument(String name, String description, String permission, String usage) {
         super(name, description, permission, usage);
     }
 
     @Override
-    public void execute(AbstractSender sender, String commandLabel, String argumentLabel, String[] args) {
+    public void execute(AbstractSender sender, String commandLabel, String argumentLabel, Void ignored, String[] args) {
         if (args.length == 0) {
             sender.sendMessage("GROUP_CREATE_USAGE", commandLabel);
 
@@ -27,6 +27,8 @@ public final class CreateGroupArgument extends AbstractArgument {
         }
 
         // TODO: Do this async
-        factory.storeGroup(args[0]);
+        factory.setCachedGroup(factory.storeGroup(args[0]));
+
+        // TODO: Send log action
     }
 }

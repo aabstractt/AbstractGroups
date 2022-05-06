@@ -21,6 +21,6 @@ public abstract class PermissionHolder {
     }
 
     public void invalidate() {
-
+        this.permissionCacheMap.clear();
     }
 }
