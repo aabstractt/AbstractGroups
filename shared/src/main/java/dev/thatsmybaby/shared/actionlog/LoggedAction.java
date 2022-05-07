@@ -32,10 +32,6 @@ public final class LoggedAction {
         LogFactory.getInstance().broadcast(this, sender);
     }
 
-    public static Character typeAsCharacter(Type type) {
-        return type.equals(Type.GROUP) ? 'G' : 'U';
-    }
-
     public final static class Builder {
 
         private long timestamp = 0L;
@@ -109,6 +105,10 @@ public final class LoggedAction {
     }
 
     public enum Type {
-        USER, GROUP
+        USER, GROUP;
+
+        public String toString() {
+            return ((Character) (this.equals(Type.GROUP) ? 'G' : 'U')).toString();
+        }
     }
 }

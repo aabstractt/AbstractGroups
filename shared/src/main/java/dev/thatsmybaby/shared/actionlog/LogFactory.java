@@ -9,22 +9,19 @@ public final class LogFactory {
 
     @Getter private final static LogFactory instance = new LogFactory();
 
-    @Setter private boolean storeAllowed = false;
-    @Setter private boolean remote = false;
-
     public void broadcast(@NonNull LoggedAction entry, @NonNull AbstractSender sender) {
-        if (this.storeAllowed) {
+        if (AbstractPlugin.getInstance().storeNotify()) {
             MysqlProvider.getInstance().storeAsync(Queries.INSERT_LOG.getResult(),
                     entry.getTimestamp(),
                     entry.getSourceXuid(),
                     entry.getSourceName(),
-                    LoggedAction.typeAsCharacter(entry.getType()).toString(),
+                    entry.getType().toString(),
                     entry.getTargetXuid(),
                     entry.getTargetName()
             );
         }
 
-        if (remote) {
+        if (AbstractPlugin.getInstance().notifyRemote()) {
             // TODO: Send the redis packet of log action
             //RedisProvider.getInstance().redisMessage();
         }

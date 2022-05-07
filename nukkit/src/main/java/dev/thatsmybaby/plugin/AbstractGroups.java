@@ -64,4 +64,14 @@ public final class AbstractGroups extends PluginBase implements AbstractPlugin {
                 this.getServer().getOnlinePlayers().values().stream().map(this::wrapSender)
         );
     }
+
+    @Override
+    public boolean storeNotify() {
+        return this.getConfig().getBoolean("log.store", true);
+    }
+
+    @Override
+    public boolean notifyRemote() {
+        return this.getConfig().getBoolean("log.notify-remote");
+    }
 }

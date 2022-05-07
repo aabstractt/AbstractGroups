@@ -13,4 +13,8 @@ public interface AbstractPlugin {
     boolean isPrimaryThread();
 
     Stream<AbstractSender> getOnlineSenders();
+
+    boolean storeNotify();
+
+    boolean notifyRemote();
 }
