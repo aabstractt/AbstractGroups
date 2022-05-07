@@ -1,9 +1,12 @@
 package dev.thatsmybaby.plugin;
 
+import cn.nukkit.Player;
+import cn.nukkit.Server;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.PluginCommand;
 import cn.nukkit.plugin.PluginBase;
 import dev.thatsmybaby.plugin.sender.NukkitSender;
+import dev.thatsmybaby.shared.AbstractPlugin;
 import dev.thatsmybaby.shared.VersionInfo;
 import dev.thatsmybaby.shared.command.CoreAdminCommand;
 import dev.thatsmybaby.shared.factory.GroupCachedFactory;
@@ -12,14 +15,19 @@ import dev.thatsmybaby.shared.sender.AbstractSender;
 import lombok.Getter;
 
 import java.io.File;
+import java.util.stream.Stream;
 
-public final class AbstractGroups extends PluginBase {
+public final class AbstractGroups extends PluginBase implements AbstractPlugin {
 
-    @Getter private AbstractGroups instance;
+    @Getter private static AbstractGroups instance;
+
+    private AbstractSender consoleSender;
 
     @Override @SuppressWarnings("unchecked")
     public void onEnable() {
         instance = this;
+
+        this.consoleSender = new NukkitSender(Server.getInstance().getConsoleSender());
 
         VersionInfo.loadVersion();
 
@@ -42,6 +50,18 @@ public final class AbstractGroups extends PluginBase {
     }
 
     public AbstractSender wrapSender(CommandSender sender) {
-        return new NukkitSender(sender);
+        return sender instanceof Player ? new NukkitSender(sender) : this.consoleSender;
+    }
+
+    @Override
+    public boolean isPrimaryThread() {
+        return Server.getInstance().isPrimaryThread();
+    }
+
+    public Stream<AbstractSender> getOnlineSenders() {
+        return Stream.concat(
+                Stream.of(this.consoleSender),
+                this.getServer().getOnlinePlayers().values().stream().map(this::wrapSender)
+        );
     }
 }

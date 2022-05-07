@@ -5,7 +5,7 @@ import java.util.concurrent.ForkJoinPool;
 public final class TaskUtils {
 
     public static void runAsync(Runnable runnable) {
-        if (isPrimaryThread()) {
+        if (AbstractPlugin.getInstance().isPrimaryThread()) {
             ForkJoinPool.commonPool().execute(runnable);
 
             return;
@@ -14,7 +14,15 @@ public final class TaskUtils {
         runnable.run();
     }
 
-    public static boolean isPrimaryThread() {
-        return false;
+    public static void runLaterAsync(Runnable runnable, int delay) {
+
+    }
+
+    public void runLater(Runnable runnable, int delay) {
+
+    }
+
+    public void run(Runnable runnable) {
+
     }
 }

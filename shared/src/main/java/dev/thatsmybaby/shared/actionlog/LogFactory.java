@@ -1,5 +1,6 @@
 package dev.thatsmybaby.shared.actionlog;
 
+import dev.thatsmybaby.shared.AbstractPlugin;
 import dev.thatsmybaby.shared.provider.MysqlProvider;
 import dev.thatsmybaby.shared.sender.AbstractSender;
 import lombok.*;
@@ -32,7 +33,9 @@ public final class LogFactory {
     }
 
     public void broadcast(@NonNull LoggedAction entry) {
-        // TODO: get all players and send the message
+        AbstractPlugin.getInstance().getOnlineSenders()
+                .filter(sender -> sender.hasPermission("log.notify"))
+                .forEach(sender -> sender.sendMessage("LOG_NOTIFY", entry.getSourceName(), entry.getTargetName(), entry.getAction()));
     }
 
     @RequiredArgsConstructor (access = AccessLevel.PRIVATE)
