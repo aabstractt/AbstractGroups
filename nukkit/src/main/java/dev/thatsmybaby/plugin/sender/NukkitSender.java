@@ -1,4 +1,4 @@
-package dev.thatsmybaby.groups.sender;
+package dev.thatsmybaby.plugin.sender;
 
 import cn.nukkit.command.CommandSender;
 import dev.thatsmybaby.shared.sender.AbstractSender;

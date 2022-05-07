@@ -1,9 +1,9 @@
-package dev.thatsmybaby.groups;
+package dev.thatsmybaby.plugin;
 
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.PluginCommand;
 import cn.nukkit.plugin.PluginBase;
-import dev.thatsmybaby.groups.sender.NukkitSender;
+import dev.thatsmybaby.plugin.sender.NukkitSender;
 import dev.thatsmybaby.shared.VersionInfo;
 import dev.thatsmybaby.shared.command.CoreAdminCommand;
 import dev.thatsmybaby.shared.factory.GroupCachedFactory;
