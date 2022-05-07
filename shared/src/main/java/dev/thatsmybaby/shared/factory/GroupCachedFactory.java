@@ -5,6 +5,7 @@ import dev.thatsmybaby.shared.object.PermissionCache;
 import dev.thatsmybaby.shared.provider.AbstractResultSet;
 import dev.thatsmybaby.shared.provider.MysqlProvider;
 import lombok.Getter;
+import lombok.NonNull;
 import org.apache.logging.log4j.Level;
 
 import java.util.HashMap;
@@ -30,15 +31,15 @@ public final class GroupCachedFactory {
         }
     }
 
-    public GroupCache getCachedGroup(String name) {
+    public GroupCache getCachedGroup(@NonNull String name) {
         return this.groupCacheMap.get(name.toLowerCase());
     }
 
-    public void setCachedGroup(GroupCache group) {
+    public void setCachedGroup(@NonNull GroupCache group) {
         this.groupCacheMap.put(group.getName().toLowerCase(), group);
     }
 
-    public GroupCache fetchGroupCache(String name) {
+    public GroupCache fetchGroupCache(@NonNull String name) {
         AbstractResultSet rs = MysqlProvider.getInstance().fetch("SELECT * FROM abstract_groups WHERE name = ?", name);
 
         if (rs == null || !rs.next()) return null;
@@ -46,17 +47,17 @@ public final class GroupCachedFactory {
         return GroupCache.fromResult(rs, this.fetchPermissionCache(name));
     }
 
-    public GroupCache storeGroup(String name) {
+    public GroupCache storeGroup(@NonNull String name) {
         MysqlProvider.getInstance().store("INSERT INTO abstract_groups");
 
         return new GroupCache(name, 0, "", "", new HashMap<>());
     }
 
-    public void storeGroup(GroupCache groupCache) {
+    public void storeGroup(@NonNull GroupCache groupCache) {
         // TODO: Update group cache
     }
 
-    public Map<String, PermissionCache> fetchPermissionCache(String name) {
+    public Map<String, PermissionCache> fetchPermissionCache(@NonNull String name) {
         AbstractResultSet rs = MysqlProvider.getInstance().fetch("SELECT * FROM abstract_permissions WHERE object_name = ?", name);
 
         if (rs == null) return null;
