@@ -2,10 +2,9 @@ package dev.thatsmybaby.shared.provider;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import dev.thatsmybaby.shared.VersionInfo;
 import lombok.Getter;
 import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.sql.Connection;
@@ -18,8 +17,6 @@ public final class MysqlProvider {
 
     private HikariDataSource dataSource = null;
     private HikariConfig hikariConfig = null;
-
-    @Getter private Logger logger;
 
     public void init(File file) {
         try {
@@ -41,8 +38,6 @@ public final class MysqlProvider {
         config.setValidationTimeout(120000);
 
         this.dataSource = new HikariDataSource(this.hikariConfig = config);
-
-        this.logger = LogManager.getLogger("AbstractGroups");
     }
 
     public AbstractResultSet fetch(String sql, Object... args) {
@@ -88,7 +83,7 @@ public final class MysqlProvider {
         this.close();
 
         if (this.hikariConfig == null) {
-            this.logger.log(Level.FATAL, "Can't reconnect because Hikari config is null...");
+            VersionInfo.getLogger().log(Level.FATAL, "Can't reconnect because Hikari config is null...");
 
             return false;
         }
@@ -96,7 +91,7 @@ public final class MysqlProvider {
         try {
             this.dataSource = new HikariDataSource(this.hikariConfig);
         } catch (Exception e) {
-            this.logger.log(Level.FATAL, "Can't reconnect because, reason: {}", e.getMessage());
+            VersionInfo.getLogger().log(Level.FATAL, "Can't reconnect because, reason: {}", e.getMessage());
 
             return false;
         }

@@ -15,6 +15,15 @@
     <packaging>jar</packaging>
 
     <dependencies>
+        <!-- powernukkit -->
+        <dependency>
+            <groupId>org.powernukkit</groupId>
+            <artifactId>powernukkit</artifactId>
+            <version>1.6.0.1-PN</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- abstractgroups shared -->
         <dependency>
             <groupId>dev.thatsmybaby.groups</groupId>
             <artifactId>shared</artifactId>

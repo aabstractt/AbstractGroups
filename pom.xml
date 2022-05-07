@@ -20,14 +20,6 @@
     </modules>
 
     <dependencies>
-        <!-- powernukkit -->
-        <dependency>
-            <groupId>org.powernukkit</groupId>
-            <artifactId>powernukkit</artifactId>
-            <version>1.6.0.1-PN</version>
-            <scope>provided</scope>
-        </dependency>
-
         <!-- lombok -->
         <dependency>
             <groupId>org.projectlombok</groupId>

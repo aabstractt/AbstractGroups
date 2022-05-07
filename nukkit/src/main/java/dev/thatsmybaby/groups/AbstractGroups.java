@@ -4,6 +4,7 @@ import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.PluginCommand;
 import cn.nukkit.plugin.PluginBase;
 import dev.thatsmybaby.groups.sender.NukkitSender;
+import dev.thatsmybaby.shared.VersionInfo;
 import dev.thatsmybaby.shared.command.CoreAdminCommand;
 import dev.thatsmybaby.shared.factory.GroupCachedFactory;
 import dev.thatsmybaby.shared.provider.MysqlProvider;
@@ -19,6 +20,8 @@ public final class AbstractGroups extends PluginBase {
     @Override @SuppressWarnings("unchecked")
     public void onEnable() {
         instance = this;
+
+        VersionInfo.loadVersion();
 
         PluginCommand<AbstractGroups> command = (PluginCommand<AbstractGroups>) this.getPluginCommand("coreadmin");
 

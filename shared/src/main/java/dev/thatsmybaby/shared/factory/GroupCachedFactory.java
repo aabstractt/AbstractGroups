@@ -1,5 +1,6 @@
 package dev.thatsmybaby.shared.factory;
 
+import dev.thatsmybaby.shared.VersionInfo;
 import dev.thatsmybaby.shared.object.GroupCache;
 import dev.thatsmybaby.shared.object.PermissionCache;
 import dev.thatsmybaby.shared.provider.AbstractResultSet;
@@ -21,13 +22,17 @@ public final class GroupCachedFactory {
         AbstractResultSet rs = MysqlProvider.getInstance().fetch("SELECT * FROM abstract_groups");
 
         if (rs == null) {
-            MysqlProvider.getInstance().getLogger().log(Level.FATAL, "Error trying fetch abstract_groups and result received null");
+            VersionInfo.getLogger().log(Level.FATAL, "Error trying fetch abstract_groups and result received null");
 
             return;
         }
 
         while (rs.next()) {
-            this.setCachedGroup(GroupCache.fromResult(rs, this.fetchPermissionCache(rs.fetchString("name"))));
+            String name = rs.fetchString("name");
+
+            if (name == null) continue;
+
+            this.setCachedGroup(GroupCache.fromResult(rs, this.fetchPermissionCache(name)));
         }
     }
 
