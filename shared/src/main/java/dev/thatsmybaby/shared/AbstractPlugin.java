@@ -10,11 +10,19 @@ public interface AbstractPlugin {
         throw new RuntimeException("Plugin not initialized");
     }
 
-    boolean isPrimaryThread();
+    default boolean isPrimaryThread() {
+        throw new RuntimeException("Plugin not initialized");
+    }
 
-    Stream<AbstractSender> getOnlineSenders();
+    default Stream<AbstractSender> getOnlineSenders() {
+        throw new RuntimeException("Plugin not initialized");
+    }
 
-    boolean storeNotify();
+    default boolean storeLog() {
+        throw new RuntimeException("Plugin not initialized");
+    }
 
-    boolean notifyRemote();
+    default boolean logRemote() {
+        throw new RuntimeException("Plugin not initialized");
+    }
 }

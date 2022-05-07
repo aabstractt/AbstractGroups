@@ -66,12 +66,12 @@ public final class AbstractGroups extends PluginBase implements AbstractPlugin {
     }
 
     @Override
-    public boolean storeNotify() {
+    public boolean storeLog() {
         return this.getConfig().getBoolean("log.store", true);
     }
 
     @Override
-    public boolean notifyRemote() {
+    public boolean logRemote() {
         return this.getConfig().getBoolean("log.notify-remote");
     }
 }

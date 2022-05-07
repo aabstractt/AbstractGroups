@@ -10,7 +10,7 @@ public final class LogFactory {
     @Getter private final static LogFactory instance = new LogFactory();
 
     public void broadcast(@NonNull LoggedAction entry, @NonNull AbstractSender sender) {
-        if (AbstractPlugin.getInstance().storeNotify()) {
+        if (AbstractPlugin.getInstance().storeLog()) {
             MysqlProvider.getInstance().storeAsync(Queries.INSERT_LOG.getResult(),
                     entry.getTimestamp(),
                     entry.getSourceXuid(),
@@ -21,7 +21,7 @@ public final class LogFactory {
             );
         }
 
-        if (AbstractPlugin.getInstance().notifyRemote()) {
+        if (AbstractPlugin.getInstance().logRemote()) {
             // TODO: Send the redis packet of log action
             //RedisProvider.getInstance().redisMessage();
         }
