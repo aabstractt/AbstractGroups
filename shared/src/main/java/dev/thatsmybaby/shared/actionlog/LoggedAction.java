@@ -1,5 +1,7 @@
 package dev.thatsmybaby.shared.actionlog;
 
+import dev.thatsmybaby.shared.object.GroupCache;
+import dev.thatsmybaby.shared.object.PermissionHolder;
 import dev.thatsmybaby.shared.sender.AbstractSender;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -19,8 +21,19 @@ public final class LoggedAction {
     private final String targetXuid;
     private final String targetName;
 
+    private final Type type;
+    private final String action;
+
     public static @NonNull  Builder build() {
         return new Builder();
+    }
+
+    public void submit(AbstractSender sender) {
+        LogFactory.getInstance().broadcast(this, sender);
+    }
+
+    public static Character typeAsCharacter(Type type) {
+        return type.equals(Type.GROUP) ? 'G' : 'U';
     }
 
     public final static class Builder {
@@ -30,8 +43,11 @@ public final class LoggedAction {
         private String sourceXuid;
         private String sourceName;
 
-        private String targetXuid;
+        private String targetXuid = null;
         private String targetName;
+
+        private Type type;
+        private String action;
 
         private Builder() {
             // Not allow make instance
@@ -55,7 +71,7 @@ public final class LoggedAction {
             return this.source(sender.getXuid(), sender.getName());
         }
 
-        public @NonNull Builder target(String targetXuid, String targetName) {
+        public @NonNull Builder target(String targetXuid, @NonNull String targetName) {
             this.targetXuid = targetXuid;
 
             this.targetName = targetName;
@@ -63,12 +79,36 @@ public final class LoggedAction {
             return this;
         }
 
-        public @NonNull Builder target(AbstractSender sender) {
-            return this.source(sender.getXuid(), sender.getName());
+        public @NonNull Builder target(AbstractSender target) {
+            return this.source(target.getXuid(), target.getName());
+        }
+
+        public @NonNull Builder target(PermissionHolder target) {
+            if (target instanceof GroupCache) {
+                return this.target(null, ((GroupCache) target).getName()).type(Type.GROUP);
+            }
+
+            return this.target(null, "");
+        }
+
+        public Builder type(Type type) {
+            this.type = type;
+
+            return this;
+        }
+
+        public @NonNull Builder action(Object args) {
+            this.action = "";
+
+            return this;
         }
 
         public @NonNull LoggedAction build() {
-            return new LoggedAction(this.timestamp, this.sourceXuid, this.sourceName, this.targetXuid, this.targetName);
+            return new LoggedAction(this.timestamp, this.sourceXuid, this.sourceName, this.targetXuid, this.targetName, this.type, this.action);
         }
+    }
+
+    public enum Type {
+        USER, GROUP
     }
 }

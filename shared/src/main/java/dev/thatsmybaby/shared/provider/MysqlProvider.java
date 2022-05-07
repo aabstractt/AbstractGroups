@@ -2,6 +2,7 @@ package dev.thatsmybaby.shared.provider;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import dev.thatsmybaby.shared.TaskUtils;
 import dev.thatsmybaby.shared.VersionInfo;
 import lombok.Getter;
 import org.apache.logging.log4j.Level;
@@ -73,6 +74,10 @@ public final class MysqlProvider {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public void storeAsync(String sql, Object... args) {
+        TaskUtils.runAsync(() -> this.store(sql, args));
     }
 
     private boolean disconnected() {

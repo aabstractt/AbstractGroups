@@ -53,7 +53,7 @@ public final class GroupCachedFactory {
     }
 
     public GroupCache storeGroup(@NonNull String name) {
-        MysqlProvider.getInstance().store("INSERT INTO abstract_groups");
+        MysqlProvider.getInstance().storeAsync("INSERT INTO abstract_groups");
 
         return new GroupCache(name, 0, "", "", new HashMap<>());
     }

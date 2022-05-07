@@ -1,5 +1,6 @@
 package dev.thatsmybaby.shared.commands.group;
 
+import dev.thatsmybaby.shared.actionlog.LoggedAction;
 import dev.thatsmybaby.shared.command.AbstractArgument;
 import dev.thatsmybaby.shared.factory.GroupCachedFactory;
 import dev.thatsmybaby.shared.sender.AbstractSender;
@@ -26,9 +27,10 @@ public final class CreateGroupArgument extends AbstractArgument<Void> {
             return;
         }
 
-        // TODO: Do this async
         factory.setCachedGroup(factory.storeGroup(args[0]));
 
-        // TODO: Send log action
+        LoggedAction.build().source(sender).target(null, args[0]).type(LoggedAction.Type.GROUP)
+                .action("create")
+                .build().submit(sender);
     }
 }
