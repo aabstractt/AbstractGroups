@@ -17,6 +17,7 @@
     <modules>
         <module>shared</module>
         <module>nukkit</module>
+        <module>waterdog</module>
     </modules>
 
     <dependencies>
