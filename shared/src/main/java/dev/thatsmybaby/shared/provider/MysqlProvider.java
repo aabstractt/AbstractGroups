@@ -115,6 +115,7 @@ public final class MysqlProvider {
             if (result instanceof String) preparedStatement.setString(i, (String) result);
             if (result instanceof Integer) preparedStatement.setInt(i, (Integer) result);
             if (result instanceof Boolean) preparedStatement.setBoolean(i, (Boolean) result);
+            if (result instanceof Float) preparedStatement.setFloat(i, (Float) result);
         }
     }
 }

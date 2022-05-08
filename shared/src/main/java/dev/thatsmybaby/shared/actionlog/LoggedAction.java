@@ -29,7 +29,7 @@ public final class LoggedAction {
     }
 
     public void submit(AbstractSender sender) {
-        LogFactory.getInstance().broadcast(this, sender);
+        LogManager.getInstance().broadcast(this, sender);
     }
 
     public final static class Builder {

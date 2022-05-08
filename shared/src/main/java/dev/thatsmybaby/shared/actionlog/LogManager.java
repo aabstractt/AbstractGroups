@@ -5,9 +5,9 @@ import dev.thatsmybaby.shared.provider.MysqlProvider;
 import dev.thatsmybaby.shared.sender.AbstractSender;
 import lombok.*;
 
-public final class LogFactory {
+public final class LogManager {
 
-    @Getter private final static LogFactory instance = new LogFactory();
+    @Getter private final static LogManager instance = new LogManager();
 
     public void broadcast(@NonNull LoggedAction entry, @NonNull AbstractSender sender) {
         if (AbstractPlugin.getInstance().storeLog()) {
