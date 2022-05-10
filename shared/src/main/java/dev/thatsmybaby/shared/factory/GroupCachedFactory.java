@@ -61,7 +61,7 @@ public final class GroupCachedFactory {
         return new GroupCache(
                 name,
                 0,
-                new MetaCache("default", null, null, new HashSet<>(), new HashSet<>(), new HashSet<>()),
+                MetaCache.empty(),
                 new HashMap<>()
         );
     }
@@ -93,7 +93,12 @@ public final class GroupCachedFactory {
             }
         }
 
-        return new MetaCache(null, null, null, new HashSet<>(), prefixes, suffixes);
+        return new MetaCache(
+                prefixes.stream().findFirst().orElse(null),
+                suffixes.stream().findFirst().orElse(null),
+                prefixes,
+                suffixes
+        );
     }
 
     public Map<String, PermissionCache> fetchPermissionCache(@NonNull String name) {
