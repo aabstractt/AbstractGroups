@@ -2,7 +2,6 @@ package dev.thatsmybaby.shared.provider;
 
 import lombok.RequiredArgsConstructor;
 
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -29,6 +28,16 @@ public final class AbstractResultSet {
         }
 
         return null;
+    }
+
+    public String fetchStringNonNull(String field) {
+        String result = this.fetchString(field);
+
+        if (result == null) {
+            throw new RuntimeException("Tried fetch " + field + " but received a null value");
+        }
+
+        return result;
     }
 
     public int fetchInt(String name) {

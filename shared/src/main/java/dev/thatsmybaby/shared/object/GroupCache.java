@@ -2,6 +2,7 @@ package dev.thatsmybaby.shared.object;
 
 import dev.thatsmybaby.shared.provider.AbstractResultSet;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 
 import java.util.Map;
@@ -9,10 +10,10 @@ import java.util.Map;
 @Getter
 public final class GroupCache extends PermissionHolder {
 
-    private final String name;
+    private final @NonNull String name;
     @Setter private int priority;
 
-    public GroupCache(String name, int priority, MetaCache metaCache, Map<String, PermissionCache> permissionMetadata) {
+    public GroupCache(@NonNull String name, int priority, @NonNull MetaCache metaCache, Map<String, PermissionCache> permissionMetadata) {
         super(metaCache, permissionMetadata);
 
         this.name = name;
@@ -25,7 +26,7 @@ public final class GroupCache extends PermissionHolder {
 
     public static GroupCache fromResult(AbstractResultSet rs, MetaCache metaCache, Map<String, PermissionCache> permissionsFetched) {
         return new GroupCache(
-                rs.fetchString("name"),
+                rs.fetchStringNonNull("name"),
                 rs.fetchInt("priority"),
                 metaCache,
                 permissionsFetched

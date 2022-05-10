@@ -31,11 +31,11 @@ public final class GroupCachedFactory {
         }
 
         while (rs.next()) {
-            String name = rs.fetchString("name");
-
-            if (name == null) continue;
-
-            this.setCachedGroup(GroupCache.fromResult(rs, this.fetchMetaCache(rs.fetchInt("rowId")), this.fetchPermissionCache(name)));
+            this.setCachedGroup(GroupCache.fromResult(
+                    rs,
+                    this.fetchMetaCache(rs.fetchInt("rowId")),
+                    this.fetchPermissionCache(rs.fetchStringNonNull("name"))
+            ));
         }
     }
 
@@ -52,7 +52,11 @@ public final class GroupCachedFactory {
 
         if (rs == null || !rs.next()) return null;
 
-        return GroupCache.fromResult(rs, this.fetchMetaCache(rs.fetchInt("rowId")), this.fetchPermissionCache(name));
+        return GroupCache.fromResult(
+                rs,
+                this.fetchMetaCache(rs.fetchInt("rowId")),
+                this.fetchPermissionCache(name)
+        );
     }
 
     public GroupCache storeGroup(@NonNull String name) {
@@ -70,7 +74,7 @@ public final class GroupCachedFactory {
         // TODO: Update group cache
     }
 
-    public MetaCache fetchMetaCache(int targetId) {
+    public @NonNull MetaCache fetchMetaCache(int targetId) {
         AbstractResultSet rs = MysqlProvider.getInstance().fetch("NODE_META_SELECT_ALL_BY_TARGET_ID", targetId);
 
         if (rs == null || !rs.next()) {
@@ -109,11 +113,7 @@ public final class GroupCachedFactory {
         Map<String, PermissionCache> map = new HashMap<>();
 
         while (rs.next()) {
-            String permissionName = rs.fetchString("name");
-
-            if (permissionName == null) continue;
-
-            map.put(permissionName.toLowerCase(), PermissionCache.fromResult(rs));
+            map.put(rs.fetchStringNonNull("name").toLowerCase(), PermissionCache.fromResult(rs));
         }
 
         return map;
