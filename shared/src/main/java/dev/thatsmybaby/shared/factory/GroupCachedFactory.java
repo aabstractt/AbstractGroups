@@ -34,7 +34,7 @@ public final class GroupCachedFactory {
             this.setCachedGroup(GroupCache.fromResult(
                     rs,
                     this.fetchMetaCache(rs.fetchInt("rowId")),
-                    this.fetchPermissionCache(rs.fetchStringNonNull("name"))
+                    this.fetchPermissionCache(rs.fetchInt("rowId"))
             ));
         }
     }
@@ -55,7 +55,7 @@ public final class GroupCachedFactory {
         return GroupCache.fromResult(
                 rs,
                 this.fetchMetaCache(rs.fetchInt("rowId")),
-                this.fetchPermissionCache(name)
+                this.fetchPermissionCache(rs.fetchInt("rowId"))
         );
     }
 
@@ -105,8 +105,8 @@ public final class GroupCachedFactory {
         );
     }
 
-    public Map<String, PermissionCache> fetchPermissionCache(@NonNull String name) {
-        AbstractResultSet rs = MysqlProvider.getInstance().fetch("SELECT * FROM abstract_permissions WHERE object_name = ?", name);
+    public Map<String, PermissionCache> fetchPermissionCache(int groupId) {
+        AbstractResultSet rs = MysqlProvider.getInstance().fetch("GROUP_PERMISSIONS_SELECT_ALL", groupId);
 
         if (rs == null) return null;
 

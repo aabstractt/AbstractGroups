@@ -21,6 +21,20 @@ public final class MetaCache {
     private Set<String> prefixes;
     private Set<String> suffixes;
 
+    public void invalidate() {
+        this.prefixes.clear();
+
+        this.suffixes.clear();
+    }
+
+    public void recalculate() {
+        // TODO: Recalculate prefixes, suffixes etc and order it as createdAt date to get the first prefix and suffix
+    }
+
+    public void addPrefix(String prefix) {
+        this.prefixes.add(prefix);
+    }
+
     public static MetaCache empty() {
         return new MetaCache(
                 null,

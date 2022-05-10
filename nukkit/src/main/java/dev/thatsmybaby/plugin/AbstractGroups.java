@@ -27,6 +27,8 @@ public final class AbstractGroups extends PluginBase implements AbstractPlugin {
     public void onEnable() {
         instance = this;
 
+        this.saveResource("hikari.properties");
+
         this.consoleSender = new NukkitSender(Server.getInstance().getConsoleSender());
 
         VersionInfo.loadVersion();

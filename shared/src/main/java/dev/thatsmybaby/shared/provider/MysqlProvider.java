@@ -8,12 +8,15 @@ import lombok.Getter;
 import org.apache.logging.log4j.Level;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 public final class MysqlProvider {
 
@@ -44,6 +47,24 @@ public final class MysqlProvider {
         config.setValidationTimeout(120000);
 
         this.dataSource = new HikariDataSource(this.hikariConfig = config);
+
+        InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("git.properties");
+
+        if (inputStream == null) return;
+
+        Properties properties = new Properties();
+
+        try {
+            properties.load(inputStream);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        for (String k : properties.stringPropertyNames()) {
+            if (k.contains("_CREATE")) this.store(properties.getProperty(k));
+
+            this.statements.put(k, properties.getProperty(k));
+        }
     }
 
     public AbstractResultSet fetch(String sql, Object... args) {

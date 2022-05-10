@@ -3,6 +3,7 @@ package dev.thatsmybaby.shared.commands.group;
 import dev.thatsmybaby.shared.command.AbstractArgument;
 import dev.thatsmybaby.shared.factory.GroupCachedFactory;
 import dev.thatsmybaby.shared.object.GroupCache;
+import dev.thatsmybaby.shared.object.MetaCache;
 import dev.thatsmybaby.shared.sender.AbstractSender;
 
 public final class SetPrefixArgument extends AbstractArgument<GroupCache> {
@@ -19,7 +20,14 @@ public final class SetPrefixArgument extends AbstractArgument<GroupCache> {
             return;
         }
 
-        groupCache.setPrefix(args[0]);
+        MetaCache metaCache = groupCache.getMetaCache();
+
+        metaCache.invalidate();
+
+        metaCache.addPrefix(args[0]);
+        metaCache.recalculate();
+
+        // TODO: Execute storeMeta, no storeGroup because i need store the MetaCache
 
         GroupCachedFactory.getInstance().storeGroup(groupCache);
 
