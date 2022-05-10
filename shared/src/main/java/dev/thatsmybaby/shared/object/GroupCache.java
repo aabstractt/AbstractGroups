@@ -12,29 +12,22 @@ public final class GroupCache extends PermissionHolder {
     private final String name;
     @Setter private int priority;
 
-    @Setter private String prefix;
-    @Setter private String suffix;
-
-    public GroupCache(String name, int priority, String prefix, String suffix, Map<String, PermissionCache> permissionMetadata) {
-        super(permissionMetadata);
+    public GroupCache(String name, int priority, MetaCache metaCache, Map<String, PermissionCache> permissionMetadata) {
+        super(metaCache, permissionMetadata);
 
         this.name = name;
         this.priority = priority;
-
-        this.prefix = prefix;
-        this.suffix = suffix;
     }
 
     public void invalidate() {
         super.invalidate();
     }
 
-    public static GroupCache fromResult(AbstractResultSet rs, Map<String, PermissionCache> permissionsFetched) {
+    public static GroupCache fromResult(AbstractResultSet rs, MetaCache metaCache, Map<String, PermissionCache> permissionsFetched) {
         return new GroupCache(
                 rs.fetchString("name"),
                 rs.fetchInt("priority"),
-                rs.fetchString("prefix"),
-                rs.fetchString("suffix"),
+                metaCache,
                 permissionsFetched
         );
     }

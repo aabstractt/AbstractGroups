@@ -10,7 +10,10 @@ import org.apache.logging.log4j.Level;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
 public final class MysqlProvider {
 
@@ -18,6 +21,8 @@ public final class MysqlProvider {
 
     private HikariDataSource dataSource = null;
     private HikariConfig hikariConfig = null;
+
+    private final Map<String, String> statements = new HashMap<>();
 
     public void init(File file) {
         try {
@@ -44,12 +49,18 @@ public final class MysqlProvider {
     public AbstractResultSet fetch(String sql, Object... args) {
         if (this.disconnected()) return this.reconnect() ? this.fetch(sql, args) : null;
 
+        if (!this.statements.containsKey(sql)) {
+            throw new RuntimeException("Statement " + sql + " not found");
+        }
+
         try (Connection connection = this.dataSource.getConnection()) {
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            try (PreparedStatement preparedStatement = connection.prepareStatement(this.statements.get(sql))) {
+                this.set(preparedStatement, args);
 
-            this.set(preparedStatement, args);
-
-            return new AbstractResultSet(preparedStatement, preparedStatement.executeQuery());
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    return new AbstractResultSet(resultSet);
+                }
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -62,15 +73,20 @@ public final class MysqlProvider {
             if (this.reconnect()) {
                 this.store(sql, args);
             }
+
+            return;
+        }
+
+        if (!this.statements.containsKey(sql)) {
+            throw new RuntimeException("Statement " + sql + " not found");
         }
 
         try (Connection connection = this.dataSource.getConnection()) {
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            try (PreparedStatement preparedStatement = connection.prepareStatement(this.statements.get(sql))) {
+                this.set(preparedStatement, args);
 
-            this.set(preparedStatement, args);
-
-            preparedStatement.executeUpdate();
-            preparedStatement.close();
+                preparedStatement.executeUpdate();
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }

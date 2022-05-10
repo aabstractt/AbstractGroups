@@ -10,6 +10,7 @@ import java.util.Map;
 @AllArgsConstructor @Getter
 public abstract class PermissionHolder {
 
+    protected MetaCache metaCache;
     @Setter protected Map<String, PermissionCache> permissionCacheMap;
 
     public PermissionCache getCachedPermission(@NonNull String permissionName) {

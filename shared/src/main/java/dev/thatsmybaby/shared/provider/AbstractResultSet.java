@@ -9,7 +9,6 @@ import java.sql.SQLException;
 @RequiredArgsConstructor
 public final class AbstractResultSet {
 
-    private final PreparedStatement preparedStatement;
     private final ResultSet resultSet;
 
     public boolean next() {
@@ -50,11 +49,5 @@ public final class AbstractResultSet {
         }
 
         return false;
-    }
-
-    public void close() throws SQLException {
-        this.resultSet.close();
-
-        this.preparedStatement.close();
     }
 }
