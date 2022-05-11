@@ -26,7 +26,7 @@ public final class GroupCache extends PermissionHolder {
 
     public static GroupCache fromResult(AbstractResultSet rs, MetaCache metaCache, Map<String, PermissionCache> permissionsFetched) {
         return new GroupCache(
-                rs.fetchStringNonNull("name"),
+                rs.fetchString("name"),
                 rs.fetchInt("priority"),
                 metaCache,
                 permissionsFetched

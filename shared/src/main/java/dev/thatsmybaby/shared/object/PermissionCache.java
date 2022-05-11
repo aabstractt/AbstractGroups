@@ -15,8 +15,8 @@ public final class PermissionCache {
 
     public static PermissionCache fromResult(AbstractResultSet rs) {
         return new PermissionCache(
-                rs.fetchStringNonNull("name"),
-                rs.fetchStringNonNull("server"),
+                rs.fetchString("name"),
+                rs.fetchString("server"),
                 rs.fetchBoolean("value")
         );
     }

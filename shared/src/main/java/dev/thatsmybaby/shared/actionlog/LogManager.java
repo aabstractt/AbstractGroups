@@ -11,13 +11,14 @@ public final class LogManager {
 
     public void broadcast(@NonNull LoggedAction entry, @NonNull AbstractSender sender) {
         if (AbstractPlugin.getInstance().storeLog()) {
-            MysqlProvider.getInstance().storeAsync(Queries.INSERT_LOG.getResult(),
+            MysqlProvider.getInstance().storeAsync("LOGS_INSERT",
                     entry.getTimestamp(),
                     entry.getSourceXuid(),
                     entry.getSourceName(),
                     entry.getType().toString(),
                     entry.getTargetXuid(),
-                    entry.getTargetName()
+                    entry.getTargetName(),
+                    entry.getAction()
             );
         }
 
@@ -33,12 +34,5 @@ public final class LogManager {
         AbstractPlugin.getInstance().getOnlineSenders()
                 .filter(sender -> sender.hasPermission("log.notify"))
                 .forEach(sender -> sender.sendMessage("LOG_NOTIFY", entry.getSourceName(), entry.getTargetName(), entry.getAction()));
-    }
-
-    @RequiredArgsConstructor (access = AccessLevel.PRIVATE)
-    private enum Queries {
-        INSERT_LOG("INSERT INTO <table>_logs (timestamp, source_xuid, source_name, type, target_xuid, target_name, action)");
-
-        @Getter private final String result;
     }
 }

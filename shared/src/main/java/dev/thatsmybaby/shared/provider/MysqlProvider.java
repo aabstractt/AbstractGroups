@@ -14,6 +14,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -48,22 +49,22 @@ public final class MysqlProvider {
 
         this.dataSource = new HikariDataSource(this.hikariConfig = config);
 
-        InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("git.properties");
+        InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("mysql.properties");
 
         if (inputStream == null) return;
 
-        Properties properties = new Properties();
-
         try {
+            Properties properties = new Properties();
+
             properties.load(inputStream);
+
+            for (String k : properties.stringPropertyNames()) {
+                this.statements.put(k, properties.getProperty(k).replace("{prefix}", "abstractperms_"));
+
+                if (k.endsWith("_CREATE")) this.store(k);
+            }
         } catch (IOException e) {
             e.printStackTrace();
-        }
-
-        for (String k : properties.stringPropertyNames()) {
-            if (k.contains("_CREATE")) this.store(properties.getProperty(k));
-
-            this.statements.put(k, properties.getProperty(k));
         }
     }
 
@@ -79,7 +80,7 @@ public final class MysqlProvider {
                 this.set(preparedStatement, args);
 
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                    return new AbstractResultSet(resultSet);
+                    return AbstractResultSet.fetch(resultSet);
                 }
             }
         } catch (SQLException e) {
@@ -149,10 +150,12 @@ public final class MysqlProvider {
         for (int i = 1; i <= args.length; i++) {
             Object result = args[i - 1];
 
-            if (result instanceof String) preparedStatement.setString(i, (String) result);
+            if (result instanceof String || result instanceof Character) preparedStatement.setString(i, result.toString());
             if (result instanceof Integer) preparedStatement.setInt(i, (Integer) result);
             if (result instanceof Boolean) preparedStatement.setBoolean(i, (Boolean) result);
             if (result instanceof Float) preparedStatement.setFloat(i, (Float) result);
+            if (result instanceof Long) preparedStatement.setLong(i, (Long) result);
+            if (result == null || (result instanceof String && ((String) result).isEmpty())) preparedStatement.setNull(i, preparedStatement.getParameterMetaData().getParameterType(i));
         }
     }
 }

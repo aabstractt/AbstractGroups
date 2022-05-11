@@ -9,6 +9,8 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 import java.time.Instant;
+import java.util.LinkedList;
+import java.util.List;
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE) @Getter
 public final class LoggedAction {
@@ -36,27 +38,31 @@ public final class LoggedAction {
 
         private long timestamp = 0L;
 
-        private String sourceXuid;
+        private String sourceXuid = null;
         private String sourceName;
 
         private String targetXuid = null;
         private String targetName;
 
         private Type type;
-        private String action;
+        private String action = null;
 
         private Builder() {
             // Not allow make instance
         }
 
-        public @NonNull Builder timestamp(Instant instant) {
+        public @NonNull Builder timestamp() {
+            return this.timestamp(Instant.now());
+        }
+
+        public @NonNull Builder timestamp(@NonNull Instant instant) {
             this.timestamp = instant.getEpochSecond();
 
             return this;
         }
 
-        public @NonNull Builder source(String sourceXuid, String sourceName) {
-            this.sourceXuid = sourceXuid;
+        public @NonNull Builder source(String sourceXuid, @NonNull String sourceName) {
+            this.sourceXuid = sourceXuid != null && sourceXuid.isEmpty() ? null : sourceXuid;
 
             this.sourceName = sourceName;
 
@@ -68,7 +74,7 @@ public final class LoggedAction {
         }
 
         public @NonNull Builder target(String targetXuid, @NonNull String targetName) {
-            this.targetXuid = targetXuid;
+            this.targetXuid = targetXuid != null && targetXuid.isEmpty() ? null : targetXuid;
 
             this.targetName = targetName;
 
@@ -76,7 +82,7 @@ public final class LoggedAction {
         }
 
         public @NonNull Builder target(AbstractSender target) {
-            return this.source(target.getXuid(), target.getName());
+            return this.target(target.getXuid(), target.getName());
         }
 
         public @NonNull Builder target(PermissionHolder target) {
@@ -87,14 +93,18 @@ public final class LoggedAction {
             return this.target(null, "");
         }
 
-        public Builder type(Type type) {
+        public Builder type(@NonNull Type type) {
             this.type = type;
 
             return this;
         }
 
-        public @NonNull Builder action(Object args) {
-            this.action = "";
+        public @NonNull Builder action(@NonNull Object... args) {
+            List<String> list = new LinkedList<>();
+
+            for (Object arg : args) list.add(arg.toString());
+
+            this.action = String.join(" ", list);
 
             return this;
         }

@@ -8,7 +8,6 @@ public final class AbstractGroups extends Plugin {
 
     @Getter private static AbstractGroups instance;
 
-    @Override
     public void onEnable() {
         instance = this;
 

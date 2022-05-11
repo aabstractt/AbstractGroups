@@ -88,8 +88,6 @@ public final class GroupCachedFactory {
             String context = rs.fetchString("context");
             String value = rs.fetchString("value");
 
-            if (context == null || value == null) continue;
-
             if (context.equalsIgnoreCase("prefix")) {
                 prefixes.add(value);
             } else {
@@ -113,7 +111,7 @@ public final class GroupCachedFactory {
         Map<String, PermissionCache> map = new HashMap<>();
 
         while (rs.next()) {
-            map.put(rs.fetchStringNonNull("name").toLowerCase(), PermissionCache.fromResult(rs));
+            map.put(rs.fetchString("name").toLowerCase(), PermissionCache.fromResult(rs));
         }
 
         return map;

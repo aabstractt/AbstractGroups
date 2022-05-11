@@ -2,6 +2,7 @@ package dev.thatsmybaby.plugin.sender;
 
 import cn.nukkit.Player;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.utils.TextFormat;
 import dev.thatsmybaby.shared.sender.AbstractSender;
 import lombok.RequiredArgsConstructor;
 
@@ -27,6 +28,8 @@ public final class NukkitSender extends AbstractSender {
 
     @Override
     public void sendMessage(String k, String... args) {
+        this.sender.sendMessage(TextFormat.colorize(k));
+
         // TODO: Translate the message and send it
     }
 }

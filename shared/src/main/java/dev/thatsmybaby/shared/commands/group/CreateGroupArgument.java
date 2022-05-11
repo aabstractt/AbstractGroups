@@ -29,7 +29,8 @@ public final class CreateGroupArgument extends AbstractArgument<Void> {
 
         factory.setCachedGroup(factory.storeGroup(args[0]));
 
-        LoggedAction.build().source(sender).target(null, args[0]).type(LoggedAction.Type.GROUP)
+        LoggedAction.build().timestamp().source(sender).target(null, args[0])
+                .type(LoggedAction.Type.GROUP)
                 .action("create")
                 .build().submit(sender);
     }

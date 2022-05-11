@@ -4,6 +4,7 @@ import dev.thatsmybaby.shared.commands.group.CreateGroupArgument;
 import dev.thatsmybaby.shared.commands.group.GroupParentCommand;
 import dev.thatsmybaby.shared.sender.AbstractSender;
 import lombok.Getter;
+import lombok.NonNull;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -34,9 +35,15 @@ public final class CoreAdminCommand {
                 .orElse(null);
     }
 
-    public void execute(AbstractSender sender, String commandLabel, String argumentLabel, String[] args) {
+    public void execute(@NonNull AbstractSender sender, @NonNull String commandLabel, String argumentLabel, String[] args) {
         if (!sender.hasPermission("abstractgroups.command")) {
             sender.sendMessage("&cYou don't have permissions to use this command.");
+
+            return;
+        }
+
+        if (args.length == 0) {
+            sender.sendMessage("&cUse /" + commandLabel + " help");
 
             return;
         }
@@ -55,6 +62,6 @@ public final class CoreAdminCommand {
             return;
         }
 
-        argument.execute(sender, commandLabel, argumentLabel, null, args);
+        argument.execute(sender, commandLabel, argumentLabel, null, Arrays.copyOfRange(args, 1, args.length));
     }
 }

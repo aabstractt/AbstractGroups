@@ -1,28 +1,43 @@
 package dev.thatsmybaby.shared;
 
 import dev.thatsmybaby.shared.sender.AbstractSender;
+import lombok.Getter;
+import lombok.Setter;
 
+import java.util.concurrent.Callable;
 import java.util.stream.Stream;
 
-public interface AbstractPlugin {
+public class AbstractPlugin {
 
-    static AbstractPlugin getInstance() {
-        throw new RuntimeException("Plugin not initialized");
+    @Getter private final static AbstractPlugin instance = new AbstractPlugin();
+
+    @Setter private Callable<Boolean> futurePrimaryThread;
+    @Setter private Callable<Stream<AbstractSender>> futureOnlineSenders;
+
+    @Setter private boolean storeLog = false;
+    @Setter private boolean logRemote = false;
+
+    public boolean isPrimaryThread() {
+        try {
+            return this.futurePrimaryThread.call();
+        } catch (Exception e) {
+            return false;
+        }
     }
 
-    default boolean isPrimaryThread() {
-        throw new RuntimeException("Plugin not initialized");
+    public Stream<AbstractSender> getOnlineSenders() {
+        try {
+            return this.futureOnlineSenders.call();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
-    default Stream<AbstractSender> getOnlineSenders() {
-        throw new RuntimeException("Plugin not initialized");
+    public boolean storeLog() {
+        return this.storeLog;
     }
 
-    default boolean storeLog() {
-        throw new RuntimeException("Plugin not initialized");
-    }
-
-    default boolean logRemote() {
-        throw new RuntimeException("Plugin not initialized");
+    public boolean logRemote() {
+        return this.logRemote;
     }
 }
