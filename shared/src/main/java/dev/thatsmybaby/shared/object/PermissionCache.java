@@ -6,12 +6,16 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 
-@AllArgsConstructor @Getter
+@AllArgsConstructor
 public final class PermissionCache {
 
-    private final @NonNull String name;
-    @Setter private @NonNull String serverName;
+    @Getter private final @NonNull String name;
+    @Getter @Setter private @NonNull String serverName;
     @Setter private boolean value;
+
+    public boolean getValue() {
+        return this.value;
+    }
 
     public static PermissionCache fromResult(AbstractResultSet rs) {
         return new PermissionCache(

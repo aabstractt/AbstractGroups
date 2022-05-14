@@ -1,8 +1,10 @@
 package dev.thatsmybaby.shared.commands.group;
 
+import dev.thatsmybaby.shared.TaskUtils;
 import dev.thatsmybaby.shared.actionlog.LoggedAction;
 import dev.thatsmybaby.shared.command.AbstractArgument;
 import dev.thatsmybaby.shared.factory.GroupCachedFactory;
+import dev.thatsmybaby.shared.object.GroupCache;
 import dev.thatsmybaby.shared.sender.AbstractSender;
 
 public final class CreateGroupArgument extends AbstractArgument<Void> {
@@ -27,11 +29,21 @@ public final class CreateGroupArgument extends AbstractArgument<Void> {
             return;
         }
 
-        factory.setCachedGroup(factory.storeGroup(args[0]));
+        TaskUtils.runAsync(() -> {
+            GroupCache groupCache = factory.storeGroup(args[0]);
 
-        LoggedAction.build().timestamp().source(sender).target(null, args[0])
-                .type(LoggedAction.Type.GROUP)
-                .action("create")
-                .build().submit(sender);
+            if (groupCache == null) {
+                sender.sendMessage("&cAn error occurred when tried insert a group into database");
+
+                return;
+            }
+
+            factory.setCachedGroup(groupCache);
+
+            LoggedAction.build().timestamp().source(sender).target(null, args[0])
+                    .type(LoggedAction.Type.GROUP)
+                    .action("create")
+                    .build().submit(sender);
+        });
     }
 }

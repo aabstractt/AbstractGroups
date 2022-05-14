@@ -1,16 +1,12 @@
 package dev.thatsmybaby.shared.object;
 
-import dev.thatsmybaby.shared.factory.GroupCachedFactory;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @AllArgsConstructor @Getter
 public final class MetaCache {
@@ -27,12 +23,32 @@ public final class MetaCache {
         this.suffixes.clear();
     }
 
+    public void invalidatePrefix(String prefix) {
+        this.prefixes.clear();
+
+        this.prefix = prefix;
+    }
+
+    public void invalidateSuffix(String suffix) {
+        this.suffixes.clear();
+
+        this.suffix = suffix;
+    }
+
     public void recalculate() {
         // TODO: Recalculate prefixes, suffixes etc and order it as createdAt date to get the first prefix and suffix
     }
 
     public void addPrefix(String prefix) {
         this.prefixes.add(prefix);
+    }
+
+    public boolean findPrefix(String prefix) {
+        return this.prefixes.contains(prefix) || Objects.equals(this.prefix, prefix);
+    }
+
+    public boolean findSuffix(String suffix) {
+        return this.suffixes.contains(suffix) || Objects.equals(this.suffix, suffix);
     }
 
     public static MetaCache empty() {

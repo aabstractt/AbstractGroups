@@ -14,7 +14,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -107,6 +106,7 @@ public final class MysqlProvider {
             try (PreparedStatement preparedStatement = connection.prepareStatement(this.statements.get(sql))) {
                 this.set(preparedStatement, args);
 
+
                 preparedStatement.executeUpdate();
             }
         } catch (SQLException e) {
@@ -116,6 +116,32 @@ public final class MysqlProvider {
 
     public void storeAsync(String sql, Object... args) {
         TaskUtils.runAsync(() -> this.store(sql, args));
+    }
+
+    public Object storeAndFetch(String sql, Object... args) {
+        if (this.disconnected()) return this.reconnect() ? this.storeAndFetch(sql, args) : null;
+
+        if (!this.statements.containsKey(sql)) {
+            throw new RuntimeException("Statement " + sql + " not found");
+        }
+
+        try (Connection connection = this.dataSource.getConnection()) {
+            try (PreparedStatement preparedStatement = connection.prepareStatement(this.statements.get(sql))) {
+                this.set(preparedStatement, args);
+
+                preparedStatement.executeUpdate();
+
+                ResultSet rs = preparedStatement.getGeneratedKeys();
+
+                if (rs.next()) {
+                    return rs.getString(0);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
     private boolean disconnected() {

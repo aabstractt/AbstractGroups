@@ -18,6 +18,8 @@ public final class AbstractResultSet {
     public boolean next() {
         boolean next = this.iterator.hasNext();
 
+        this.invalidate();
+
         if (next) this.current = this.iterator.next();
 
         return next;
@@ -33,6 +35,10 @@ public final class AbstractResultSet {
 
     public boolean fetchBoolean(String field) {
         return (boolean) this.current.getOrDefault(field, false);
+    }
+
+    public void invalidate() {
+        if (this.current != null) this.current.clear();
     }
 
     public static @NonNull AbstractResultSet fetch(@NonNull ResultSet rs) throws SQLException {

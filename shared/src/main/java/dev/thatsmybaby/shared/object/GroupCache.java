@@ -10,11 +10,14 @@ import java.util.Map;
 @Getter
 public final class GroupCache extends PermissionHolder {
 
+    private final int rowId;
     private final @NonNull String name;
     @Setter private int priority;
 
-    public GroupCache(@NonNull String name, int priority, @NonNull MetaCache metaCache, Map<String, PermissionCache> permissionMetadata) {
+    public GroupCache(int rowId, @NonNull String name, int priority, @NonNull MetaCache metaCache, Map<String, PermissionCache> permissionMetadata) {
         super(metaCache, permissionMetadata);
+
+        this.rowId = rowId;
 
         this.name = name;
         this.priority = priority;
@@ -26,6 +29,7 @@ public final class GroupCache extends PermissionHolder {
 
     public static GroupCache fromResult(AbstractResultSet rs, MetaCache metaCache, Map<String, PermissionCache> permissionsFetched) {
         return new GroupCache(
+                rs.fetchInt("rowId"),
                 rs.fetchString("name"),
                 rs.fetchInt("priority"),
                 metaCache,

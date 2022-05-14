@@ -1,6 +1,7 @@
 package dev.thatsmybaby.shared.factory;
 
 import dev.thatsmybaby.shared.VersionInfo;
+import dev.thatsmybaby.shared.actionlog.LoggedAction;
 import dev.thatsmybaby.shared.object.GroupCache;
 import dev.thatsmybaby.shared.object.MetaCache;
 import dev.thatsmybaby.shared.object.PermissionCache;
@@ -37,6 +38,8 @@ public final class GroupCachedFactory {
                     this.fetchPermissionCache(rs.fetchInt("rowId"))
             ));
         }
+
+        rs.invalidate();
     }
 
     public GroupCache getCachedGroup(@NonNull String name) {
@@ -52,17 +55,27 @@ public final class GroupCachedFactory {
 
         if (rs == null || !rs.next()) return null;
 
-        return GroupCache.fromResult(
-                rs,
-                this.fetchMetaCache(rs.fetchInt("rowId")),
-                this.fetchPermissionCache(rs.fetchInt("rowId"))
-        );
+        // Maybe this is a good solution?
+        try {
+            return GroupCache.fromResult(
+                    rs,
+                    this.fetchMetaCache(rs.fetchInt("rowId")),
+                    this.fetchPermissionCache(rs.fetchInt("rowId"))
+            );
+        } finally {
+            rs.invalidate();
+        }
     }
 
     public GroupCache storeGroup(@NonNull String name) {
-        MysqlProvider.getInstance().storeAsync("GROUP_INSERT", name);
+        Object generatedKey = MysqlProvider.getInstance().storeAndFetch("GROUP_INSERT", name);
+
+        if (!(generatedKey instanceof Integer)) {
+            return null;
+        }
 
         return new GroupCache(
+                (Integer) generatedKey,
                 name,
                 0,
                 MetaCache.empty(),
@@ -70,8 +83,17 @@ public final class GroupCachedFactory {
         );
     }
 
-    public void storeGroup(@NonNull GroupCache groupCache) {
-        // TODO: Update group cache
+    public void storeMeta(int targetId, LoggedAction.Type type, String context, String value) {
+        MysqlProvider.getInstance().storeAsync("NODE_META_INSERT",
+                targetId,
+                type.toString(),
+                context,
+                value
+        );
+    }
+
+    public void removeMeta(int targetId, LoggedAction.Type type, String context, String value) {
+        MysqlProvider.getInstance().store("NODE_META_DELETE", targetId, type.toString(), context, value);
     }
 
     public @NonNull MetaCache fetchMetaCache(int targetId) {
@@ -95,6 +117,8 @@ public final class GroupCachedFactory {
             }
         }
 
+        rs.invalidate();
+
         return new MetaCache(
                 prefixes.stream().findFirst().orElse(null),
                 suffixes.stream().findFirst().orElse(null),
@@ -113,6 +137,8 @@ public final class GroupCachedFactory {
         while (rs.next()) {
             map.put(rs.fetchString("name").toLowerCase(), PermissionCache.fromResult(rs));
         }
+
+        rs.invalidate();
 
         return map;
     }

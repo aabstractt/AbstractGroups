@@ -17,4 +17,12 @@ public abstract class AbstractArgument<T> {
     public boolean authorized(AbstractSender sender) {
         return this.permission == null || sender.hasPermission(this.permission);
     }
+
+    public Object parseArgumentContext(String type, String[] args) {
+        for (String entry : args) {
+            // TODO: Get the argument context
+        }
+
+        return null;
+    }
 }
